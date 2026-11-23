@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-23T19:36:39.719035+00:00",
+  "repository": "https://github.com/wolf1276/shadowcompute",
+  "visibility": "PUBLIC",
+  "productionUrl": "https://shadowcompute.vercel.app",
+  "sourceReleaseCommit": "3e19e026daa73b2d819681ce1287357d519cbdbe",
+  "hosting": "Static Vercel interface with explicit origin-pinned loopback companion",
+  "firstDeploymentId": "dpl_3YbqbQkreNkv7WHzwVmGZr8ixVmE",
+  "httpStatus": 200,
+  "githubConnected": true,
+  "rootSuite": {
+    "passed": 69,
+    "files": 19
+  },
+  "typecheck": "PASS",
+  "staticBuildVerification": "PASS; 16-asset allowlist, imports and CSP",
+  "githubWebCI": "PASS",
+  "publicationScan": "Gitleaks history clean; exact configured-secret comparison clean excluding known disposable local-test fixture",
+  "companionHTTP": "Authenticated production Origin returned HTTP 200; unapproved origins/remote session discovery rejected in tests",
+  "browser": "Production pairing screen visually verified. Cross-origin loopback fetch timed out in the in-app browser; successful browser pairing is not claimed. Installed wallet/passkey acceptance not performed.",
+  "publicPrepaidContractsDeployed": false,
+  "localServices": "STOPPED at user request; Docker containers retained, Anvil snapshot saved; no project model GPU processes remain",
+  "retainedData": "Existing local container layers, wallet files, notes, databases, models and journals preserved",
+  "screenshot": "artifacts/vercel-live.png"
+}
