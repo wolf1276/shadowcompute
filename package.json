@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=24"
+    "node": "24.x"
   },
   "scripts": {
     "compile": "node scripts/compile.mjs",
@@ -15,7 +15,7 @@
     "test:local": "vitest run packages/backend/test/protocol.local.test.ts",
     "typecheck": "tsc --noEmit",
     "env:up": "docker compose up -d --wait",
-    "env:down": "docker compose down",
+    "env:down": "docker compose stop",
     "gateway": "tsx --env-file-if-exists=.env packages/backend/src/main.ts",
     "reconcile": "tsx scripts/reconcile.ts",
     "demo": "tsx --env-file-if-exists=.env scripts/demo.ts",

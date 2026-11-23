@@ -8,6 +8,10 @@ The current product is **prepaid AI**, with no APY, lending strategy or yield pr
 
 This is a testnet prototype. The current bridge deployment uses a dedicated local Anvil chain and an actual local Midnight node/proof server. Its ERC20 is a valueless test token, not native USDC. Sepolia is supported by the source treasury/network guard, but a complete public Sepolia → Midnight Preview deployment has not been verified. The first relay is explicitly trusted; this is not a trustless bridge or a Circle CCTP integration.
 
+**Hosted interface:** https://shadowcompute.vercel.app · **Public source:** https://github.com/wolf1276/shadowcompute
+
+The hosted interface pairs explicitly with the local demo companion on this computer. Start it with `TERMINAL_ALLOWED_ORIGIN=https://shadowcompute.vercel.app npm run terminal:prepaid`, open http://localhost:8792/pair, and enter its private code on the hosted site. Proofs, GPU inference and durable state stay local. See [deployment and recovery instructions](docs/VERCEL_DEPLOYMENT.md). This is not a publicly hosted inference backend or a new public-chain contract deployment. Local demo services are stopped between demos to free RAM/GPU.
+
 ## Architecture
 
 ```mermaid

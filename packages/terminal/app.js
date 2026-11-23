@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 let browserAllowance=null,browserJobs=[],browserBusy=false,browserProgress=null,setup=onboardingState(),lastSetup='',lastAdapter='',chosenModel='',prepaidBalance={available:'0',purchased:'0'};
 function appBusy(){return state.busy||browserBusy;}
 let connectBusy=false;
-let walletConnection=null,wallets=[],token='',state={credits:[],jobs:[],busy:false},active=null,lastTranscript='',privacy=false,vaultOpen=false,creditChoice='';
+let walletConnection=null,wallets=[],state={credits:[],jobs:[],busy:false},active=null,lastTranscript='',privacy=false,vaultOpen=false,creditChoice='';
 const transport=createTransport({location,storage:sessionStorage});
 const api=(path,body)=>transport.request(path,body);
 
@@ -101,8 +101,9 @@ const companionDialog=$('companion-dialog');
 $('companion-settings').hidden=!transport.hosted;
 $('companion-settings').onclick=()=>{if(!appBusy())companionDialog.showModal();};
 companionDialog.addEventListener('cancel',event=>event.preventDefault());
-$('companion-form').onsubmit=async event=>{event.preventDefault();$('companion-error').textContent='Connecting…';try{transport.configure($('companion-url').value.trim(),$('companion-code').value.trim());await startConnection();$('companion-code').value='';companionDialog.close();}catch(error){$('companion-error').textContent=error.message;}};
+$('companion-form').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;$('companion-error').textContent='Connecting…';try{transport.configure($('companion-url').value.trim(),$('companion-code').value.trim());await startConnection();$('companion-code').value='';companionDialog.close();}catch(error){$('companion-error').textContent=error.message;}finally{button.disabled=false;}};
 $('companion-url').onchange=()=>{try{$('companion-pair-link').href=new URL('/pair',$('companion-url').value).href;}catch{}};
+if(transport.hosted){$('network-label').textContent='Companion required';$('connection').textContent='Not paired';$('funding-status').textContent='Companion offline';$('funding-label').textContent='Connect your computer to load its state';$('send').disabled=true;}
 (async()=>{try{if(transport.configured)await startConnection();else companionDialog.showModal();}catch(error){$('status').textContent=error.message;if(transport.hosted){$('companion-error').textContent=error.message;companionDialog.showModal();}}})();
 
 $('menu').onclick=()=>document.querySelector('.sidebar').classList.toggle('open');

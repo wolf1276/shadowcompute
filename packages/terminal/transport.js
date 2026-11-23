@@ -13,7 +13,7 @@ export function createTransport({location,storage,fetcher=fetch}){
   if(hosted&&!pairing)throw new Error('Connect your local demo companion first.');
   if(hosted&&path==='/api/session')return {token:pairing.token};
   let response;
-  try{response=await fetcher((hosted?pairing.origin:'')+path,{method:body?'POST':'GET',headers:{'x-console-token':hosted?pairing.token:localToken,...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),cache:'no-store',credentials:'omit'});}catch{throw new Error('Companion unreachable. Start it, allow this exact website origin and permit local network access in your browser.');}
+  try{response=await fetcher((hosted?pairing.origin:'')+path,{method:body?'POST':'GET',headers:{'x-console-token':hosted?pairing.token:localToken,...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{}),cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(path.endsWith('/inference')?420000:30000)});}catch{throw new Error('Companion unreachable. Start it, allow this exact website origin and permit local network access in your browser.');}
   const result=await response.json();if(!response.ok)throw new Error(result.error||'Companion request failed');if(!hosted&&path==='/api/session')localToken=result.token;return result;
  }};
 }
