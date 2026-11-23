@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadowCompute · AI workspace</title><link rel="stylesheet" href="/style.css"><script type="module" src="/app.js"></script></head>
 <body>
+<dialog id="companion-dialog" class="vault-unlock companion-dialog"><span class="eyebrow">SHADOWCOMPUTE · CONNECT YOUR COMPUTER</span><h2>Connect your demo companion</h2><p>The interface is hosted on Vercel. Proofs, private state and local AI run on your computer.</p><form id="companion-form"><label for="companion-url">Local companion URL</label><input id="companion-url" type="url" value="http://localhost:8792" required><a id="companion-pair-link" href="http://localhost:8792/pair" target="_blank" rel="noopener noreferrer">Open local pairing page ↗</a><label for="companion-code">Private pairing code</label><input id="companion-code" type="password" autocomplete="off" minlength="64" maxlength="64" required><button type="submit">Connect companion</button></form><p id="companion-error" role="status">Start the companion with this website's exact HTTPS origin, then copy its code from the local pairing page. Your browser may ask for local network access.</p></dialog>
 <div class="workspace">
 <aside class="sidebar">
  <button class="new-thread" id="new-thread"><span>□</span> New thread</button>
@@ -13,7 +14,7 @@
  <footer><span class="brand-icon">◈</span> ShadowCompute <span class="version" id="network-side">—</span></footer>
 </aside>
 <main>
- <header class="topbar"><button id="menu" aria-label="Toggle sidebar">☰</button><span class="mono">›_</span><span id="thread-title">New thread</span><span class="top-spacer"></span><span class="network"><i></i> <span id="network-label">Connecting…</span></span><select id="wallet-choice" aria-label="Select Midnight wallet" hidden></select><button id="wallet-connect" class="wallet-connect">Connect wallet</button></header>
+ <header class="topbar"><button id="menu" aria-label="Toggle sidebar">☰</button><span class="mono">›_</span><span id="thread-title">New thread</span><span class="top-spacer"></span><span class="network"><i></i> <span id="network-label">Connecting…</span></span><select id="wallet-choice" aria-label="Select Midnight wallet" hidden></select><button id="companion-settings" class="wallet-connect" hidden>Companion</button><button id="wallet-connect" class="wallet-connect">Connect wallet</button></header>
  <div class="tabs"><button class="active" id="terminal-tab">›_ &nbsp; AI workspace</button><button id="vault-tab">◈ &nbsp; Private vault</button><button id="privacy-tab">◈ &nbsp; Privacy</button><span class="tab-end">Text inference · no shell access</span></div>
  <div class="wallet-message" id="wallet-message" role="status"></div>
  <div class="content">

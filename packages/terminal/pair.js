@@ -1,0 +1,4 @@
+const code=document.getElementById('pair-code'),status=document.getElementById('pair-status');
+try{const response=await fetch('/api/session',{cache:'no-store',credentials:'omit'});if(!response.ok)throw new Error();const session=await response.json();code.value=session.token;status.textContent='Copy this code into your hosted ShadowCompute interface.';}catch{status.textContent='Pairing unavailable. Open this page on the local companion itself.';}
+document.getElementById('pair-reveal').onclick=()=>{code.type=code.type==='password'?'text':'password';};
+document.getElementById('pair-copy').onclick=async()=>{try{await navigator.clipboard.writeText(code.value);status.textContent='Copied. Paste only into your ShadowCompute website.';}catch{code.type='text';code.select();status.textContent='Select and copy the code manually.';}};

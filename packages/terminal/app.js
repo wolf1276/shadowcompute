@@ -1,3 +1,4 @@
+import {createTransport} from './transport.js';
 import {initPrepaid} from './prepaid.js';
 import {setupSteps,onboardingState,inferenceExperience,progressDescription,elapsedLabel} from './experience.js';
 import {initVault} from './vault.js';
@@ -8,10 +9,9 @@ let browserAllowance=null,browserJobs=[],browserBusy=false,browserProgress=null,
 function appBusy(){return state.busy||browserBusy;}
 let connectBusy=false;
 let walletConnection=null,wallets=[],token='',state={credits:[],jobs:[],busy:false},active=null,lastTranscript='',privacy=false,vaultOpen=false,creditChoice='';
-async function api(path,body){
- const response=await fetch(path,{method:body?'POST':'GET',headers:{'x-console-token':token,...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
- const result=await response.json();if(!response.ok)throw new Error(result.error||'Local service unavailable');return result;
-}
+const transport=createTransport({location,storage:sessionStorage});
+const api=(path,body)=>transport.request(path,body);
+
 function text(tag,value,className){const el=document.createElement(tag);el.textContent=value;if(className)el.className=className;return el;}
 function selectJob(job){active=job.id;privacy=false;vaultOpen=false;lastTranscript='';$('prompt').value='';render();}
 function message(label,content,className){const el=text('article','',`message ${className}`);el.append(text('div',label,'message-label'),text('pre',content));return el;}
@@ -93,7 +93,17 @@ $('new-thread').onclick=newThread;$('terminal-home').onclick=newThread;
 $('refresh').onclick=refresh;
 $('terminal-tab').onclick=()=>{privacy=false;vaultOpen=false;render();};
 $('privacy-tab').onclick=()=>{privacy=true;vaultOpen=false;render();};
-(async()=>{try{({token}=await api('/api/session'));await refresh();active=(state.jobs.find(j=>j.status==='working')||state.jobs.at(-1))?.id||null;render();setInterval(refresh,2000);}catch(e){$('status').textContent=e.message;}})();
+let refreshTimer;
+async function startConnection(){
+ await api('/api/session');state=await api('/api/state');active=(state.jobs.find(j=>j.status==='working')||state.jobs.at(-1))?.id||null;render();$('connection').textContent='Connected';clearInterval(refreshTimer);refreshTimer=setInterval(refresh,2000);
+}
+const companionDialog=$('companion-dialog');
+$('companion-settings').hidden=!transport.hosted;
+$('companion-settings').onclick=()=>{if(!appBusy())companionDialog.showModal();};
+companionDialog.addEventListener('cancel',event=>event.preventDefault());
+$('companion-form').onsubmit=async event=>{event.preventDefault();$('companion-error').textContent='Connecting…';try{transport.configure($('companion-url').value.trim(),$('companion-code').value.trim());await startConnection();$('companion-code').value='';companionDialog.close();}catch(error){$('companion-error').textContent=error.message;}};
+$('companion-url').onchange=()=>{try{$('companion-pair-link').href=new URL('/pair',$('companion-url').value).href;}catch{}};
+(async()=>{try{if(transport.configured)await startConnection();else companionDialog.showModal();}catch(error){$('status').textContent=error.message;if(transport.hosted){$('companion-error').textContent=error.message;companionDialog.showModal();}}})();
 
 $('menu').onclick=()=>document.querySelector('.sidebar').classList.toggle('open');
 

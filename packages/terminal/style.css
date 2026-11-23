@@ -236,3 +236,14 @@ textarea::placeholder { color: #998e9f; }
  .vault-import { display: inline-flex; align-items: center; }
  input, textarea, select { font-size: 16px; }
 }
+
+.companion-dialog { width: min(520px, calc(100vw - 30px)); max-height: calc(100dvh - 30px); overflow: auto; margin: auto; border: 1px solid var(--edge); border-radius: 16px; color: var(--text); background: #15101c; }
+.companion-dialog::backdrop { background: #08050ddb; backdrop-filter: blur(8px); }
+.companion-dialog form { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.companion-dialog label { font-size: 12px; }
+.companion-dialog input, .pair-page input { padding: 12px; width: 100%; background: #0e0b12; border: 1px solid var(--edge); border-radius: 7px; }
+.companion-dialog a { color: #d7bae5; font-size: 12px; }
+.companion-dialog button { padding: 12px; background: #eee6f2; color: #211629; }
+.pair-page { width: min(620px, calc(100vw - 30px)); margin: 60px auto; }
+.pair-page h1 { font-size: 36px; text-align: left; }
+.pair-page button { padding: 12px; margin-top: 12px; border: 1px solid var(--edge); }

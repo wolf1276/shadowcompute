@@ -11,7 +11,7 @@ import { GatewayError,validateRequest } from './gateway.js';
 
 type Answer={response:string;chargedCredits:number;cached:boolean};
 type Job={model?:string;stage?:string;startedAt?:number;id:string;credit:string;prompt:string;status:'working'|'done'|'failed';answer?:Answer;error?:string};
-type Options={directory:string;assets:string;run?:(file:string,prompt:string,onProgress?:(stage:string)=>void)=>Promise<Answer>;adapter?:string;models?:readonly ModelInfo[];defaultModel?:string;funding?:string;prepaidVault?:PrepaidVault;model:string;network?:string;vault?:string;browserVault?:BrowserVault;gatewayUrl?:string};
+type Options={directory:string;assets:string;run?:(file:string,prompt:string,onProgress?:(stage:string)=>void)=>Promise<Answer>;adapter?:string;models?:readonly ModelInfo[];defaultModel?:string;funding?:string;prepaidVault?:PrepaidVault;model:string;network?:string;vault?:string;browserVault?:BrowserVault;gatewayUrl?:string;allowedOrigin?:string};
 export function runCredit(file:string,prompt:string,onProgress?:(stage:string)=>void,model?:string):Promise<Answer>{
  return new Promise((resolve,reject)=>{
   const child=spawn(process.execPath,['--import','tsx','--env-file-if-exists=.env','scripts/ask.ts',file,'--json','--progress',...(model?['--model',model]:[])],{stdio:['pipe','pipe','pipe'],detached:true});
@@ -34,6 +34,7 @@ export function runCredit(file:string,prompt:string,onProgress?:(stage:string)=>
  });
 }
 export function terminalServer(options:Options){
+ const allowedOrigin=options.allowedOrigin;if(allowedOrigin){const url=new URL(allowedOrigin);if(url.protocol!=='https:'||url.origin!==allowedOrigin||url.username||url.password)throw new Error('Companion origin must be one exact HTTPS origin');}
  const directory=realpathSync(options.directory),token=randomBytes(32).toString('hex');
  const jobs=new Map<string,Job>();let busy=false;
  const credits=()=>readdirSync(directory).filter(n=>/^credit-[1-9][0-9]*\.json$/.test(n)).sort().map(id=>({id,status:existsSync(join(directory,id+'.redemption'))?'redeemed':'ready'}));
@@ -44,12 +45,17 @@ export function terminalServer(options:Options){
   try{
    const port=(app.address() as {port:number}).port;
    if(![`127.0.0.1:${port}`,`localhost:${port}`].includes(req.headers.host??''))throw new GatewayError(403,'Invalid local host');
-   const origin=req.headers.origin;
-   if(origin&&![`http://127.0.0.1:${port}`,`http://localhost:${port}`].includes(origin))throw new GatewayError(403,'Use the local terminal origin');
-   if(req.headers['sec-fetch-site']==='cross-site')throw new GatewayError(403,'Cross-site access denied');
-   const url=req.url??'/';
-   if(req.method==='GET'&&['/','/app.js','/style.css','/city.png','/wallet.js','/capacity.js','/vault.js','/vault-store.js','/vault-passkey.js','/mera.js','/experience.js','/compact-example.js','/prepaid.js','/prepaid-notes.js'].includes(url)){
-    const file=url==='/'?'index.html':url.slice(1);
+   const origin=req.headers.origin,url=req.url??'/';
+   const remote=!!allowedOrigin&&origin===allowedOrigin;
+   if(origin&&!remote&&![`http://127.0.0.1:${port}`,`http://localhost:${port}`].includes(origin))throw new GatewayError(403,'Use an approved companion origin');
+   if(req.headers['sec-fetch-site']==='cross-site'&&!remote)throw new GatewayError(403,'Cross-site access denied');
+   if(remote){
+    res.setHeader('access-control-allow-origin',allowedOrigin!);res.setHeader('vary','Origin');
+    if(!url.startsWith('/api/')||url==='/api/session')throw new GatewayError(403,'Pair locally; remote session discovery is forbidden');
+    if(req.method==='OPTIONS'){res.setHeader('access-control-allow-methods','GET, POST, OPTIONS');res.setHeader('access-control-allow-headers','content-type, x-console-token');res.setHeader('access-control-allow-private-network','true');res.writeHead(204);res.end();return;}
+   }
+   if(req.method==='GET'&&['/','/app.js','/style.css','/city.png','/wallet.js','/capacity.js','/vault.js','/vault-store.js','/vault-passkey.js','/mera.js','/experience.js','/compact-example.js','/prepaid.js','/prepaid-notes.js','/transport.js','/pair','/pair.js'].includes(url)){
+    const file=url==='/'?'index.html':url==='/pair'?'pair.html':url.slice(1);
     res.setHeader('content-type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.png')?'image/png':'text/css; charset=utf-8');
     res.end(readFileSync(join(options.assets,file)));return;
    }
