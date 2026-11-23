@@ -1,0 +1,16 @@
+{
+  "vault": "1e98a8b938b1284dda4237c3495af6d739638c38d3c3939d620056915425535e",
+  "realCliRedemption": true,
+  "gatewayEntryPoint": "127.0.0.1:8787",
+  "firstInferenceHTTP": 200,
+  "adapter": "offline-mock",
+  "retryCached": true,
+  "chargedCredits": 1,
+  "credentialPersistedPrivately": true,
+  "principalAfterWithdrawal": "0",
+  "reserveAfterRedemption": "0",
+  "outstandingAllocations": "0",
+  "issued": "1",
+  "redeemed": "1",
+  "at": "2026-11-21T16:50:20.972524+00:00"
+}

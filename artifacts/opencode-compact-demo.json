@@ -1,0 +1,49 @@
+{
+  "network": "undeployed",
+  "model": "local-demo/shadow-compact-coder:7b",
+  "adapter": "OpenCode → local Ollama → Compact compiler",
+  "yield": "SIMULATED",
+  "creditCost": 1,
+  "maximumDraftsPerAttempt": 3,
+  "skill": ".opencode/skills/midnight-compact/SKILL.md",
+  "skillSha256": "aaa0e31afa2ca7be0904b3410fc840f838bf8f89d5eb8219bfe1b091664084ad",
+  "sourceSha256": "32fd6c792f8518baf4e307da369117dd25b0ab2da19dab775bfff77c619fb933",
+  "verification": {
+    "compiler": "0.36.1",
+    "language": "0.28",
+    "compiledWithRealZkKeys": true,
+    "tests": [
+      "initial-budget",
+      "authorized-spend",
+      "unauthorized-rejection",
+      "zero-rejection",
+      "over-budget-rejection",
+      "exact-cap",
+      "exhaustion",
+      "public-secret-leak-check",
+      "exported-entrypoints",
+      "constructor-zero-rejection",
+      "exact-ledger-fields",
+      "overflow-rejection"
+    ],
+    "passed": 12,
+    "generatedSource": "/home/ahir/Projects/midnight-hacks/artifacts/generated-budget-1795306341701/private-budget.compact",
+    "at": "2026-11-22T00:12:34.926Z"
+  },
+  "deployment": {
+    "network": "undeployed",
+    "address": "49bc5147f6e1e3410f3d2fbd200f696d15375ce7f94ce47a9866f2fc4da65352",
+    "deployTx": "00863a0539ad24dc9cb3084b9fb1282db0475301ae82804efb744ca51da53a229a",
+    "spendTx": "0031f502e0b370dc41b93ba46156f9f8b044ab6d68993c85276bc8923462b7881d",
+    "ownerCallProved": true,
+    "unauthorizedRejected": true,
+    "overBudgetRejected": true,
+    "secretAbsentFromPublicLedger": true,
+    "spent": "4",
+    "cap": "10",
+    "at": "2026-11-22T00:13:14.533Z"
+  },
+  "at": "2026-11-22T00:13:15.173Z",
+  "cachedRetryVerified": true,
+  "gatewayEntriesForPaidReceipt": 1
+}

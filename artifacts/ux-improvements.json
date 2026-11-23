@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-22T13:58:18.253889+00:00",
+  "implemented": [
+    "Guided wallet \u2192 secure vault \u2192 acknowledge backup \u2192 test assets/deposit \u2192 claim \u2192 AI setup",
+    "Saved supported passkey is the primary unlock action, with expandable password recovery",
+    "Actual bridge/relay/CLI stage events and elapsed time; no estimated percentages",
+    "Gateway-adapter-aware AI capability labels and prompts; compiler mode uses the independently tested demo task"
+  ],
+  "offlineTests": 55,
+  "offlineFiles": 13,
+  "focusedSetupTestsAfterAssetGuidance": 4,
+  "typecheck": "PASS",
+  "syntaxChecks": "PASS",
+  "htmlControlIds": "PASS",
+  "walletIntegration": {
+    "passed": true,
+    "durationSeconds": 237.44,
+    "evidence": "artifacts/browser-vault-local.json",
+    "inference": "OFFLINE MOCK"
+  },
+  "runningAdapters": {
+    "local": "opencode-compact",
+    "preview": "opencode-compact"
+  },
+  "visualAndPhysicalBraveAcceptance": "Not performed; browser/desktop controls unavailable",
+  "contractsChanged": false,
+  "publicDeploymentsCreated": false
+}

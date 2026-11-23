@@ -1,0 +1,17 @@
+{
+  "network": "undeployed",
+  "vault": "1e98a8b938b1284dda4237c3495af6d739638c38d3c3939d620056915425535e",
+  "at": "2026-11-22T00:27:32.565Z",
+  "depositTx": "00372a193d1ec26e1094ecfedc7a0fe223301fa0d2b952810b070d9d0f80ece733",
+  "claimTxs": [
+    "001368e83077fbdb00d7cd4dae71af9967939ca62f82ed6ce5f9a07ac5c81ba60a",
+    "004ec2c387ec45bda1744ca70c4ccb65d61a341843f25d8854ac4fc55f30e5914f",
+    "00d910fda806900a42036b3df74ca2c7f0073f99daaaa74e82b59104cc08c7599c"
+  ],
+  "withdrawTx": "007297ba866cbdd3d2e0b33feb826c056db7dd3dccd617cc0dd5e12f5f850aeccd",
+  "creditsGenerated": 3,
+  "creditCostPerRequest": 1,
+  "principalReturned": true,
+  "yield": "SIMULATED",
+  "privateNoteDirectory": ".private-states/demo-1795307002469"
+}

@@ -1,0 +1,4 @@
+
+> ask
+> tsx --env-file-if-exists=.env scripts/ask.ts .private-states/demo-1795280779270/credit-3.json
+

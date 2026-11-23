@@ -1,0 +1,18 @@
+{
+  "scope": "Standalone configured local text routing; no new credit payment or redemption",
+  "results": [
+    {
+      "model": "qwen-small",
+      "prompt": "Reply with exactly READY.",
+      "response": "Indeed ready. Ready to assist you further according to your requirements. Please let me know how I can be of assistance.",
+      "seconds": 0.22
+    },
+    {
+      "model": "qwen-coder",
+      "prompt": "Return only the TypeScript expression for adding 2n and 3n.",
+      "response": "```typescript\n2 * n + 3 * n\n```",
+      "seconds": 0.389
+    }
+  ],
+  "at": "2026-11-22T15:32:07.291Z"
+}

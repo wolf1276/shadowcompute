@@ -1,0 +1,20 @@
+{
+  "network": "preview",
+  "vault": "92b6763b182dc2fcee73ea5d9369553a3bfcc898e830ce22714929de7031ebc7",
+  "testToken": "6ea8480d3a55f4c9b575ce31b53a3ea9821fb56f9b35414fbaa45e21834f6976",
+  "vaultDeployTx": "0078911bee640b587309fe9c5401a9d7d5484263c5ff3b55765edbf9bb9957f7d2",
+  "tokenDeployTx": "006da781a37e8e5542b64f9d9fbb92af3c4d376d53cd223d2c48bd97d9c2b995cc",
+  "verifiedVaultState": {
+    "principal": "0",
+    "reserve": "10000",
+    "allocated": "0",
+    "issued": "0",
+    "redeemed": "0",
+    "simulatedSeconds": "0",
+    "simulatedApyBps": "1000"
+  },
+  "mint": "10000 test-token units",
+  "fund": "one 10000-unit reward reserve",
+  "verifiedAt": "2026-11-22T01:02:05.566277+00:00",
+  "limitations": "Vault read, test-token mint and reserve funding succeeded. Deposit/claim/redeem and AI gateway on Preview were not exercised. Local terminal remains connected to local devnet."
+}

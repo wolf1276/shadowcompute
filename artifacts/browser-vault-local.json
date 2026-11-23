@@ -1,0 +1,23 @@
+{
+  "network": "local",
+  "vault": "2cb07704e23aa97bcfc783353a4e7a5d277149141131cefa227acb85c25d3337",
+  "transactions": [
+    "0067651969acc411057101c23b4f342f9ff555f47c9f9f88ec801fda9f6cf771d0",
+    "0025516b9d8dc23f36f55ac0a29e96d13643cc8b98eec9a69d8efecaaeabf1c300",
+    "00602d69acc49b054115386b8a119b2a149ff6aff44b95981e13d17b31b6aa50af",
+    "000396aa4ae24fb036f25126bde9ca2e9dd680dda30931dc8811df33a57bd89e04"
+  ],
+  "walletApprovals": 4,
+  "walletHarness": "Real SDK wallet with automated connector-style balance/submit approval; not a browser extension approval",
+  "principalReturned": true,
+  "claimProved": true,
+  "withdrawalProved": true,
+  "redemptionTx": "0095042f932933b6cd0792491fe15492bddc4fad3666ac17fa85625f5515883e02",
+  "redemptionProved": true,
+  "gateway": "OFFLINE MOCK with actual finalized receipt",
+  "cachedRetry": true,
+  "receiptReplayDidNotPayAgain": true,
+  "publicSecretInspectionPassed": true,
+  "declinedApprovalDidNotSubmit": true,
+  "at": "2026-11-22T13:57:36.798Z"
+}

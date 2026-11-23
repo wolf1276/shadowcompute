@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-22T12:49:38.149013+00:00",
+  "sdk": "@category-labs/mera@0.2.0",
+  "node": "24.18.0",
+  "offlineTests": 49,
+  "offlineFiles": 12,
+  "typecheck": "PASS",
+  "syntaxChecks": "PASS",
+  "browserBundle": "same-origin, tree-shaken, MIT notice embedded",
+  "authenticationTestBoundary": "Actual Mera PRF-derived secret encryption; simulated WebAuthn client, not a physical authenticator",
+  "walletProofIntegration": {
+    "passed": true,
+    "durationSeconds": 232.12,
+    "evidence": "artifacts/browser-vault-local.json",
+    "inference": "OFFLINE MOCK"
+  },
+  "physicalBravePasskeyVerified": false,
+  "manualGate": "Enroll in Brave on localhost, back up, lock and unlock with same passkey; test recovery password.",
+  "contractsChanged": false,
+  "publicDeploymentsCreated": false,
+  "recovery": "Existing password store and scoped note/journal contents retained; encrypted backups include passkey wrapper."
+}

@@ -1,0 +1,43 @@
+{
+  "network": "Dedicated local Anvil + actual local Midnight node/proof server",
+  "publicTestnetDeployment": false,
+  "treasury": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+  "midnightBridge": "c99ce8b288625835cf781e8ecf1eb27d11f8fd2911a956dcfc094461df6bde14",
+  "asset": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+  "assetType": "Valueless local test ERC20",
+  "creditPriceSmallestUnits": "10000",
+  "creditsPurchased": 5,
+  "creditsConsumed": 2,
+  "creditsRefunded": 3,
+  "netPayerCostSmallestUnits": "20000",
+  "sourcePayment": "0xb4a575de2f96fb72242f54d6647ac75702f3fa249714a5dbc3395b797c133e9b",
+  "sourceRefund": "0x3bcfbbea634d10ccf6fa287cbf441e8fc68fca43b4a3f027e8e42a0a0ab2ee46",
+  "sourceRevenueCollection": "0x8a422af6cb25b014d8185fd4c1c149491c08ce0eddd3a9a48b5eb6cb0cb0deb8",
+  "midnightTransactionsCapturedThisRun": [
+    "00f204e295431314b6b22889a6240e4a87ff653dfd5ac681a2e8d12b0c0a8ebb92",
+    "00aafb6af3ecf5721732ecc83ddf939f94b0f9aabc346075ae735d3b89142ecf59"
+  ],
+  "walletApprovalsThisRun": 2,
+  "resumedExistingPayment": true,
+  "models": [
+    {
+      "id": "qwen-small",
+      "response": "READINESS OK.",
+      "receiptReused": true
+    },
+    {
+      "id": "qwen-coder",
+      "response": "```typescript\nsecretKey()\n```",
+      "receiptReused": true
+    }
+  ],
+  "finalityChecked": true,
+  "depositReplayDidNotMintAgain": true,
+  "modelSwitchReplayRejected": true,
+  "refundReplayDidNotPayAgain": true,
+  "originalSeedRecoveredUnspentBalance": true,
+  "outstandingCredits": "0",
+  "sourceRefundLiability": "0",
+  "sourceTreasuryBalance": "0",
+  "at": "2026-11-22T15:23:00.548Z"
+}

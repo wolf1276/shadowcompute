@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-22",
+  "counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 26,
+    "high": 0,
+    "critical": 0,
+    "total": 26
+  },
+  "directAdvisories": [
+    {
+      "package": "@effect/platform",
+      "title": "Effect: Cookie attribute injection via domain, path, and name fields in @effect/platform makeCookie()",
+      "url": "https://github.com/advisories/GHSA-chp3-j5qr-2vfr",
+      "affected": ">=0.1.0 <0.97.1"
+    },
+    {
+      "package": "glob",
+      "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+      "affected": ">=9.0.0 <=14.0.1"
+    },
+    {
+      "package": "minimatch",
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "affected": ">=7.0.0 <11.0.1"
+    }
+  ],
+  "decision": "No automatic force-fix: npm proposes a Midnight.js downgrade from the deployed Ledger 9 stack. Targeted dependency migration still needs API/proof/wallet compatibility validation.",
+  "releaseGateOpen": true
+}

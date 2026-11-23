@@ -1,0 +1,9 @@
+{
+  "model": "qwen2.5-coder:7b-instruct",
+  "skill": ".opencode/skills/midnight-compact/SKILL.md",
+  "skillSha256": "030caac7597b170d1cb02fa2ad3a8cb62cd68b80b471d9c50bbf379f6b65e74e",
+  "freshSession": true,
+  "attempt": 2,
+  "ms": 9767,
+  "purpose": "operator skill evaluation, not a paid gateway request"
+}

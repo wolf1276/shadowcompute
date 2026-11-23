@@ -1,0 +1,86 @@
+{
+  "at": "2026-11-23T19:02:57.097Z",
+  "route": "Direct loopback Ollama; not the proof/relay/gateway paid path",
+  "results": [
+    {
+      "model": "qwen2.5:0.5b",
+      "trial": 0,
+      "wallMs": 2164,
+      "answer": "The result of 2 plus 3 is 5. Therefore, the final answer is 5.",
+      "exactAnswerCorrect": false,
+      "inputTokens": 44,
+      "outputTokens": 22,
+      "loadMs": 2031.029869,
+      "generationMs": 64.923279,
+      "gpuSamples": 6,
+      "grossGpuJoules": 26
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "trial": 1,
+      "wallMs": 166,
+      "answer": "The result of 2 plus 3 is 5. Therefore, the final answer is 5.",
+      "exactAnswerCorrect": false,
+      "inputTokens": 44,
+      "outputTokens": 22,
+      "loadMs": 74.172619,
+      "generationMs": 63.984133,
+      "gpuSamples": 2,
+      "grossGpuJoules": 5
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "trial": 2,
+      "wallMs": 159,
+      "answer": "The result of 2 plus 3 is 5. Therefore, the final answer is 5.",
+      "exactAnswerCorrect": false,
+      "inputTokens": 44,
+      "outputTokens": 22,
+      "loadMs": 63.193825,
+      "generationMs": 64.067304,
+      "gpuSamples": 2,
+      "grossGpuJoules": 5
+    },
+    {
+      "model": "qwen2.5-coder:7b-instruct",
+      "trial": 0,
+      "wallMs": 8755,
+      "answer": "5",
+      "exactAnswerCorrect": true,
+      "inputTokens": 44,
+      "outputTokens": 2,
+      "loadMs": 8670.334095,
+      "generationMs": 24.389233,
+      "gpuSamples": 19,
+      "grossGpuJoules": 159
+    },
+    {
+      "model": "qwen2.5-coder:7b-instruct",
+      "trial": 1,
+      "wallMs": 126,
+      "answer": "5",
+      "exactAnswerCorrect": true,
+      "inputTokens": 44,
+      "outputTokens": 2,
+      "loadMs": 74.587786,
+      "generationMs": 21.480951,
+      "gpuSamples": 2,
+      "grossGpuJoules": 3
+    },
+    {
+      "model": "qwen2.5-coder:7b-instruct",
+      "trial": 2,
+      "wallMs": 118,
+      "answer": "5",
+      "exactAnswerCorrect": true,
+      "inputTokens": 44,
+      "outputTokens": 2,
+      "loadMs": 64.445496,
+      "generationMs": 22.204713,
+      "gpuSamples": 2,
+      "grossGpuJoules": 3
+    }
+  ],
+  "energyBoundary": "Sampled gross first-GPU board power only. Includes idle/other GPU work. Excludes CPU, RAM, cooling, hardware depreciation, proofs, settlement, retries and support. Not a full service cost.",
+  "pricing": "Test token units have no monetary value. No electricity tariff, real service revenue or profit claimed."
+}

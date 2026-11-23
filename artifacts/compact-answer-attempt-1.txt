@@ -1,0 +1,39 @@
+
+> ask
+> tsx --env-file-if-exists=.env scripts/ask.ts .private-states/demo-1795280779270/credit-1.json
+
+```compact
+pragma language_version 0.28;
+import CompactStandardLibrary;
+
+export sealed ledger owner: Bytes<32>;
+export sealed ledger cap: Uint<64>;
+export ledger spent: Uint<64>;
+
+witness secretKey(): Bytes<32>;
+
+constructor(limit: Uint<64>) {
+    assert limit > 0;
+    set cap to the public limit;
+    set owner to a hash of the witness secretKey();
+    set spent to zero;
+}
+
+export pure circuit ownerKey(sk: Bytes<32>): Bytes<32> {
+    return persistentHash(Vector[pad(32, "shadow-budget:owner:v1"), sk]);
+}
+
+export circuit spend(amount: Uint<64>): [] {
+    assert amount > 0;
+    let currentCap = get cap;
+    let currentSpent = get spent;
+    let remainingCap = currentCap - currentSpent as Uint<64>;
+
+    if amount > remainingCap then
+        fail with error "Insufficient budget";
+
+    set spent to currentSpent + amount as Uint<64>;
+}
+```
+
+Credit cost: 1; cached retry: false

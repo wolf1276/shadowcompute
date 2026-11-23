@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-22T12:18:45Z",
+  "scope": "Standalone local model benchmark; does not prove paid-receipt or browser execution",
+  "model": "shadow-compact-coder:7b",
+  "wallSeconds": 11.09,
+  "promptTokens": 42,
+  "outputTokens": 67,
+  "loadSeconds": 9.277552531,
+  "generationSeconds": 1.612170052,
+  "response": "In \"Midnight,\" the public state refers to the collective consciousness and shared experiences of society, often influenced by media, culture, and politics. The private state, on the other hand, represents an individual's personal thoughts, feelings, and actions that are not openly shared with others, embodying their inner world and subjective reality.",
+  "energyAndMoneyCost": "Not measured; no profitability claim",
+  "qualityAssessment": "FAIL: model interpreted Midnight as a general concept rather than the blockchain. Latency evidence only; not a successful product answer."
+}

@@ -1,0 +1,64 @@
+Original task:
+Write one real Midnight Compact contract, not Solidity, pseudocode or TypeScript. Return ONLY a single fenced compact code block.
+
+Task: PrivateBudget. Prove private ownership to consume a publicly auditable budget.
+Required interface (use these exact names and types so the independent tests can run):
+- pragma language_version 0.28;
+- import CompactStandardLibrary;
+- export sealed ledger owner: Bytes<32>;
+- export sealed ledger cap: Uint<64>;
+- export ledger spent: Uint<64>;
+- witness secretKey(): Bytes<32>;
+- constructor(limit: Uint<64>): assert limit > 0, set cap to the public limit, set owner to a hash of the witness secret. Leave spent initially zero.
+- export pure circuit ownerKey(sk: Bytes<32>): Bytes<32>: domain-separated persistentHash with the label "shadow-budget:owner:v1".
+- export circuit spend(amount: Uint<64>): []: prove the witness secret hashes to owner; reject amount=0 and any amount exceeding the remaining cap; increase public spent safely. No transfer, mint, withdrawal, reset, admin bypass or arbitrary public setter.
+
+Current Compact syntax notes from the official Midnight examples:
+A witness is declared without a body. The client supplies it privately.
+An example domain hash is persistentHash<Vector<2, Bytes<32>>>([pad(32, "example:owner:"), sk]);
+The hash is public, the secret never is. Use disclose(...) when a private-derived value crosses into a public ledger write.
+A Uint<64> addition widens the range. Use an explicit `as Uint<64>` cast AFTER checking that the addition is within the cap; do not truncate before checking bounds.
+Constructor syntax is `constructor(limit: Uint<64>) { ... }`, without a return type.
+Circuit syntax is `export circuit spend(amount: Uint<64>): [] { ... }`.
+Use separate assertions rather than private short-circuit branches.
+All ledger fields are public. Never write or return secretKey() itself.
+
+Keep the solution under 45 lines. Do not explain it outside the code block.
+
+
+Your previous draft failed actual Compact compiler 0.36.1 validation. Repair the complete source without removing authorization, privacy or accounting checks. Return one real compact code block.
+
+Previous draft:
+```compact
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export sealed ledger owner: Bytes<32>;
+export sealed ledger cap: Uint<64>;
+export ledger spent: Uint<64>;
+witness secretKey(): Bytes<32>;
+
+constructor(limit: Uint<64>) {
+  assert(limit > 0);
+  owner = disclose(ownerKey(secretKey()));
+  cap = disclose(limit);
+}
+
+export pure circuit ownerKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "shadow-budget:owner:v1"), sk]);
+}
+
+export circuit spend(amount: Uint<64>): [] {
+  const snapshot = spent;
+  assert(amount > 0);
+  assert(amount <= cap - snapshot);
+  spent = disclose(snapshot + amount as Uint<64>);
+}
+```
+
+Compiler diagnostics:
+Exception: candidate.compact line 9 char 19:
+  parse error: found ")" looking for ",", "||", "&&", "==", "!=", "as", "+", "-", "*", "[", ".",
+  "?", "=", "+=", or "-="
+
+
+Use real statements like assert(condition, "message"); and direct ledger assignment. The valid syntax example is in the loaded Compact skill. Replace all invalid English descriptions with real Compact. Return only the complete corrected compact code block.

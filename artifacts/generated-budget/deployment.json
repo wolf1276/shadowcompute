@@ -1,0 +1,13 @@
+{
+  "network": "undeployed",
+  "address": "55e954594d5a233c7be4dcbc0d2cea2b55e3e7fdc4dcc451425464a5afbe934b",
+  "deployTx": "004ac0e534f68744ddfb8824bc15833b76440b87f9010a2a4bdb452363e0a894d7",
+  "spendTx": "00daf783200dc741e98adb3c04a64c419619c7a7318fb0813d197523908e9eb538",
+  "ownerCallProved": true,
+  "unauthorizedRejected": true,
+  "overBudgetRejected": true,
+  "secretAbsentFromPublicLedger": true,
+  "spent": "4",
+  "cap": "10",
+  "at": "2026-11-21T17:33:39.043Z"
+}

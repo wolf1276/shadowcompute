@@ -1,0 +1,8 @@
+{
+  "network": "preview",
+  "faucet": "https://midnight-tmnight-preview.nethermind.dev/",
+  "wallets": {
+    "ALICE": "mn_addr_preview18gguxl23fnlak2x7zaeqa7x5hatn06esn9ee7sw59ev4txdsxmjqz6rtqa",
+    "BOB": "mn_addr_preview1xvhp5wazy5qjtectzke5xqspv7pvckn9a9ryhg3cp82ah65w892qlxhukc"
+  }
+}

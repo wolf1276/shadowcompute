@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-22T00:30:10.335Z",
+  "network": "local-devnet",
+  "ui": "Corral-style original implementation",
+  "model": "local-demo/shadow-compact-coder:7b",
+  "yield": "SIMULATED",
+  "creditCost": 1,
+  "creditsRemaining": 2,
+  "redemptionTx": "0049eef8e5134f75c382ef49d9fb4c65c0cee651af3b7513a33ce661ba51aaf4d8",
+  "principalReturned": true,
+  "consoleReplaySameJob": true,
+  "gatewayCachedRetry": true,
+  "gatewayAdmissions": 1,
+  "response": "artifacts/terminal-counter-answer.txt",
+  "screenshot": "artifacts/terminal-inference.png",
+  "note": "First model attempt rejected; same-paid-receipt retry succeeded after Counter reference added to skill. Counter source syntax/type checked, not deployed by terminal."
+}

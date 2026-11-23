@@ -1,0 +1,43 @@
+{
+  "at": "2026-11-23T19:07:02.223997+00:00",
+  "runtime": "Node 24.18.0",
+  "typecheck": "PASS",
+  "offlineTests": {
+    "passed": 66,
+    "files": 18
+  },
+  "treasuryTests": {
+    "passed": 11,
+    "solvencyFuzzCases": 128
+  },
+  "localResume": "PASS; completed payment/receipt/refund recovery; existing inference cache; no new spend proof claimed",
+  "publicDeployment": "Prepared; submission pending at user request",
+  "preflight": "Missing SEPOLIA_RPC_URL and EVM_RELAY_PRIVATE_KEY; zero submissions",
+  "browser": {
+    "desktop": "1280px layout fits",
+    "mobile": "390px viewport; 390px document width; observed buttons at least 44px high",
+    "keyboard": "Password field Tab moves to unlock button",
+    "wallet": "Missing-extension guidance verified; physical wallet/passkey not available",
+    "screenshot": "artifacts/prepaid-acceptance.png"
+  },
+  "modelBenchmark": "Six fresh direct local requests; 7B coder exact output 3/3; small model exact output 0/3 despite correct arithmetic; partial GPU power only",
+  "customerInterviews": "Not conducted; worksheet prepared, no outreach authorized",
+  "freshEndToEnd": {
+    "evidence": "artifacts/prepaid-e2e.fresh.json",
+    "passed": true,
+    "purchased": 5,
+    "consumed": 2,
+    "refunded": 3,
+    "newWalletApprovedMidnightTransactions": 4,
+    "bothFirstModelResponsesUncached": true,
+    "identicalRetryCached": true,
+    "sourceRefundLiability": "0",
+    "outstandingCredits": "0",
+    "modelQuality": "Small model returned READY; coder text answer misinterpreted BigInt literals and was incorrect. No code-correctness claim."
+  },
+  "services": {
+    "terminal": "http://localhost:8792",
+    "terminalStatus": 200,
+    "gateway": "ok"
+  }
+}

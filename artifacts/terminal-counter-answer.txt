@@ -1,0 +1,10 @@
+```compact
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export ledger count: Counter;
+export circuit increment(): [] {
+  count.increment(1);
+}
+```
+
+Compact 0.36.1 syntax/type check passed. Behavioral tests and real proof verification are still required before deployment.

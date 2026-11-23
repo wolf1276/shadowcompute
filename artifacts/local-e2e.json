@@ -1,0 +1,14 @@
+{
+  "network": "undeployed",
+  "at": "2026-11-21T16:41:38.144Z",
+  "vault": "9bc3bcc75e55d5011bd0ed8855230a28511b3ea3fd1241488e8a71321cd59760",
+  "token": "474eac159ddd42e9da6b4dd0088ef03c3df41d0ac60116d0eecb525e0c0b97dd",
+  "deployTx": "007c12920895ca581eb7bac0370de22bc57859fe86561db4466f05b0e910ce1e44",
+  "depositTx": "00abfb572c3b50b911e4f3e9824ef4d2dd62e39d7e83bb6249fc56a3bdac7d7c47",
+  "claimTx": "00d91966b45dbbb1e5cba63d7cf8b71732d9f186664197aff6dbb3c3aec1858980",
+  "redemptionTx": "0043197f1f4e4b92abe880ee8814661dccc2fd194459cdfd07a7abd51191d511cd",
+  "realProofs": true,
+  "inference": "offline-mock",
+  "principalRestored": "2000000",
+  "remainingReserve": "10000"
+}

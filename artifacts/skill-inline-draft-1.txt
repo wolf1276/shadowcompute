@@ -1,0 +1,23 @@
+```compact
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export sealed ledger owner: Bytes<32>;
+export sealed ledger cap: Uint<64>;
+export ledger spent: Uint<64>;
+witness secretKey(): Bytes<32>;
+constructor(limit: Uint<64>) {
+  assert limit > 0, "Limit must be greater than zero";
+  cap = disclose(limit);
+  owner = disclose(ownerKey(secretKey()));
+}
+export pure circuit ownerKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "shadow-budget:owner:v1"), sk]);
+}
+export circuit spend(amount: Uint<64>): [] {
+  assert(ownerKey(secretKey()) == owner, "Not owner");
+  assert(amount > 0, "Amount must be greater than zero");
+  assert(amount <= cap - spent, "Insufficient budget remaining");
+  const delta = disclose(amount) as Uint<64>;
+  spent += delta;
+}
+```

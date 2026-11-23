@@ -1,0 +1,6 @@
+{
+  "at": "2026-11-23T19:08:19.713Z",
+  "ready": false,
+  "submittedTransactions": 0,
+  "blocker": "Missing local configuration: SEPOLIA_RPC_URL, EVM_RELAY_PRIVATE_KEY. Never paste secrets into chat."
+}

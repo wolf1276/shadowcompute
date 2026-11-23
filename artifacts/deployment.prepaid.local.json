@@ -1,0 +1,20 @@
+{
+  "kind": "prepaid",
+  "network": "local",
+  "address": "c99ce8b288625835cf781e8ecf1eb27d11f8fd2911a956dcfc094461df6bde14",
+  "source": {
+    "rpc": "http://127.0.0.1:18545",
+    "chainId": 31337,
+    "address": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+    "asset": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+    "bridge": "0xc99ce8b288625835cf781e8ecf1eb27d11f8fd2911a956dcfc094461df6bde14",
+    "creditPrice": "10000",
+    "decimals": 6,
+    "deploymentBlock": "6",
+    "relay": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  },
+  "sourceDeployTx": "0x4b7c9e9f3c2f6a8e7af602ed70397273f7d95b338a43c756750a38fcc23428a0",
+  "midnightDeployTx": "00436f661476bde0f4b8d727cca4f283b72604789b8613382ec403cb1341d07fd0",
+  "testAsset": "Valueless local ERC20; not native USDC",
+  "at": "2026-11-22T14:59:48.499Z"
+}

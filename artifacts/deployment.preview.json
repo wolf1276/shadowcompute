@@ -1,0 +1,8 @@
+{
+  "network": "preview",
+  "address": "92b6763b182dc2fcee73ea5d9369553a3bfcc898e830ce22714929de7031ebc7",
+  "tokenAddress": "6ea8480d3a55f4c9b575ce31b53a3ea9821fb56f9b35414fbaa45e21834f6976",
+  "color": "816377dcb6e5f900f55f6dedc99aaeae9912778b2eba35b4e7ac37774258323f",
+  "deployTx": "0078911bee640b587309fe9c5401a9d7d5484263c5ff3b55765edbf9bb9957f7d2",
+  "tokenDeployTx": "006da781a37e8e5542b64f9d9fbb92af3c4d376d53cd223d2c48bd97d9c2b995cc"
+}
