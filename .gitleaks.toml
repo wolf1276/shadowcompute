@@ -7,3 +7,9 @@ condition = "AND"
 paths = ['''artifacts/(deployment(\.preview)?|local-e2e|preview-verification)\.json$''']
 regexTarget = "line"
 regexes = ['''^\s*"(tokenAddress|tokenDeployTx|testToken|token)":\s*"[0-9a-f]{64,66}"[,]?$''']
+[[allowlists]]
+description = "Literal sessionStorage namespace, not the private pairing code"
+condition = "AND"
+paths = ['''packages/terminal/transport\.js$''']
+regexTarget = "line"
+regexes = ["^const key='shadowcompute-companion-v1';$"]

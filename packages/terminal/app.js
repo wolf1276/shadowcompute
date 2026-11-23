@@ -49,7 +49,7 @@ function render(){
  $('capacity-fill').setAttribute('stroke-dashoffset',String(100-capacity.percent));
  $('network-label').textContent=state.network==='preview'?'Midnight Preview':'Midnight devnet';$('network-side').textContent=state.network??'local';$('network-foot').textContent=state.network??'local';
  $('model').textContent=(state.model||'').split('/').at(-1)||'Local model';
- $('wallet-connect').disabled=appBusy()||connectBusy;
+ $('wallet-connect').disabled=!state.network||appBusy()||connectBusy;
  $('connection').textContent=appBusy()?'Proof / inference in progress':'Connected';
  $('thread-title').textContent=job?job.prompt.slice(0,42):'New thread';
  $('threads').replaceChildren(...jobs.map(j=>{const b=text('button','',`thread ${j.id===active?'active':''}`);b.append(text('span',j.status==='working'?'◌':j.status==='failed'?'◦':'●'),text('span',j.prompt.slice(0,34)));b.title=j.prompt;b.onclick=()=>selectJob(j);return b;}));
@@ -103,8 +103,8 @@ $('companion-settings').onclick=()=>{if(!appBusy())companionDialog.showModal();}
 companionDialog.addEventListener('cancel',event=>event.preventDefault());
 $('companion-form').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;$('companion-error').textContent='Connecting…';try{transport.configure($('companion-url').value.trim(),$('companion-code').value.trim());await startConnection();$('companion-code').value='';companionDialog.close();}catch(error){$('companion-error').textContent=error.message;}finally{button.disabled=false;}};
 $('companion-url').onchange=()=>{try{$('companion-pair-link').href=new URL('/pair',$('companion-url').value).href;}catch{}};
-if(transport.hosted){$('network-label').textContent='Companion required';$('connection').textContent='Not paired';$('funding-status').textContent='Companion offline';$('funding-label').textContent='Connect your computer to load its state';$('send').disabled=true;}
-(async()=>{try{if(transport.configured)await startConnection();else companionDialog.showModal();}catch(error){$('status').textContent=error.message;if(transport.hosted){$('companion-error').textContent=error.message;companionDialog.showModal();}}})();
+if(transport.hosted){$('wallet-connect').disabled=true;$('welcome-copy').textContent='Connect your local companion to load your private AI workspace.';$('network-label').textContent='Companion required';$('connection').textContent='Not paired';$('funding-status').textContent='Companion offline';$('funding-label').textContent='Connect your computer to load its state';$('send').disabled=true;}
+(async()=>{try{if(transport.hosted)companionDialog.showModal();if(transport.configured){await startConnection();if(transport.hosted)companionDialog.close();}else if(!companionDialog.open)companionDialog.showModal();}catch(error){$('status').textContent=error.message;if(transport.hosted){$('companion-error').textContent=error.message;if(!companionDialog.open)companionDialog.showModal();}}})();
 
 $('menu').onclick=()=>document.querySelector('.sidebar').classList.toggle('open');
 
