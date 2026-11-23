@@ -1,0 +1,28 @@
+{
+  "defaultModel": "compact-coder",
+  "models": [
+    {
+      "id": "compact-coder",
+      "label": "Qwen Coder 7B \u00b7 Compact checked",
+      "adapter": "opencode-compact",
+      "model": "local-demo/shadow-compact-coder:7b",
+      "profile": "config/opencode-local.json"
+    },
+    {
+      "id": "qwen-coder",
+      "label": "Qwen Coder 7B \u00b7 Text",
+      "adapter": "provider",
+      "model": "qwen2.5-coder:7b-instruct",
+      "url": "http://127.0.0.1:11435/v1/chat/completions",
+      "apiKeyEnv": "LOCAL_OLLAMA_KEY"
+    },
+    {
+      "id": "qwen-small",
+      "label": "Qwen 0.5B \u00b7 Quick text",
+      "adapter": "provider",
+      "model": "qwen2.5:0.5b",
+      "url": "http://127.0.0.1:11435/v1/chat/completions",
+      "apiKeyEnv": "LOCAL_OLLAMA_KEY"
+    }
+  ]
+}

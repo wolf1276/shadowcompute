@@ -1,0 +1,35 @@
+{
+  "provider": {
+    "local-demo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "ShadowCompute local free inference",
+      "options": {
+        "baseURL": "http://127.0.0.1:11435/v1",
+        "apiKey": "ollama-local-no-key-required"
+      },
+      "models": {
+        "qwen2.5:0.5b": {
+          "name": "Qwen 2.5 0.5B \u2014 local demo",
+          "limit": {
+            "context": 8192,
+            "output": 512
+          }
+        },
+        "qwen2.5-coder:7b-instruct": {
+          "name": "Qwen 2.5 Coder 7B Instruct \u2014 local Compact demo",
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
+        },
+        "shadow-compact-coder:7b": {
+          "name": "Qwen 2.5 Coder 7B \u2014 deterministic 8K Compact profile",
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
+        }
+      }
+    }
+  }
+}

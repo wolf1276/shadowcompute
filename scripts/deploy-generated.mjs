@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import { readFileSync,existsSync,writeFileSync } from 'node:fs';
+import { resolve,join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { randomBytes } from 'node:crypto';
+import { WebSocket } from 'ws';
+import pino from 'pino';
+import { deployContract,submitCallTx } from '@midnight-ntwrk/midnight-js-contracts';
+import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/v9/compact-js';
+import { startWallet } from '../packages/backend/src/wallet.ts';
+import { getConfig } from '../packages/backend/src/config.ts';
+import { buildProviders,ledgerState } from '../packages/backend/src/providers.ts';
+import { savePrivate } from '../packages/backend/src/notes.ts';
+import { assertNotInPublicState } from '../packages/contracts/sim.ts';
+Object.assign(globalThis,{WebSocket});process.umask(0o077);
+assert.equal(process.env.MIDNIGHT_NETWORK??'local','local','Generated demo deployment is local-only');
+const dir=resolve(process.argv[2]??'artifacts/generated-budget');
+assert(dir.startsWith(resolve('artifacts')+'/'),'Generated deployments must stay under project artifacts');
+assert.equal(JSON.parse(readFileSync(join(dir,'verification.json'),'utf8')).passed,12,'Run independent compiler/behavior checks first');
+assert(!existsSync(join(dir,'deployment.json')),'Generated contract already deployed; inspect its existing evidence');
+const {Contract,ledger}=await import(pathToFileURL(join(dir,'managed/contract/index.js')).href);
+const witnesses={secretKey:({privateState})=>[privateState,privateState.secretKey]};
+const compiled=CompiledContract.make('AIPrivateBudget',Contract).pipe(CompiledContract.withWitnesses(witnesses),CompiledContract.withCompiledFileAssets(join(dir,'managed')));
+const config=getConfig();const wallet=await startWallet(pino({level:'warn'}),{...config,walletNetworkId:config.networkId},{network:'local',role:'ALICE',faucet:'',syncTimeoutMs:180000});
+const owner={secretKey:new Uint8Array(randomBytes(32))};savePrivate(`.private-states/generated-budget/pending-${Date.now()}.json`,owner);
+try{
+ const providers=buildProviders(wallet,join(dir,'managed'),config);
+ const deployed=await deployContract(providers,{compiledContract:compiled,privateStateId:'AIPrivateBudget',initialPrivateState:owner,args:[10n]});
+ const address=deployed.deployTxData.public.contractAddress;
+ savePrivate(`.private-states/generated-budget/${address}.json`,owner);
+ // Save the deployment before attempting calls, so a failed later assertion never loses its address.
+ const evidence={network:'undeployed',address,deployTx:deployed.deployTxData.public.txId};
+ writeFileSync(join(dir,'deployment.json'),JSON.stringify(evidence,null,2));
+ const call=(amount)=>submitCallTx(providers,{compiledContract:compiled,contractAddress:address,privateStateId:'AIPrivateBudget',circuitId:'spend',args:[amount]});
+ const spent=await call(4n);
+ await providers.privateStateProvider.forContract(address).set('AIPrivateBudget',{secretKey:new Uint8Array(randomBytes(32))});
+ await assert.rejects(()=>call(1n));
+ await providers.privateStateProvider.forContract(address).set('AIPrivateBudget',owner);
+ await assert.rejects(()=>call(7n));
+ const state=ledger(ledgerState(await providers.publicDataProvider.queryContractState(address)));
+ assert.equal(state.spent,4n);assert.equal(state.cap,10n);assertNotInPublicState(state,{ownerSecret:owner.secretKey});
+ writeFileSync(join(dir,'deployment.json'),JSON.stringify({...evidence,spendTx:spent.public.txId,ownerCallProved:true,unauthorizedRejected:true,overBudgetRejected:true,secretAbsentFromPublicLedger:true,spent:'4',cap:'10',at:new Date().toISOString()},null,2));
+ console.info(`AI-generated Compact deployed, proved and checked on local Midnight: ${address}`);
+}finally{await wallet.stop();}

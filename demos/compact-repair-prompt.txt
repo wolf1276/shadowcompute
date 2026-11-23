@@ -1,0 +1,35 @@
+Generate a real, compilable Midnight Compact contract. Output ONLY one ```compact code block. Do not write pseudocode.
+
+Your prior PrivateBudget draft failed compiler 0.36.1: parse error at `assert limit > 0;`, expected `(`. It also used invalid English `set`, `get`, `then` and omitted ownership authentication. None of those are Compact syntax. Fix the entire implementation, not only that line.
+
+Here is a DIFFERENT fully valid current Compact syntax example. It toggles a Boolean for a private admin; your task below is a budget, not this toggle.
+```compact
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export sealed ledger admin: Bytes<32>;
+export ledger enabled: Boolean;
+witness localKey(): Bytes<32>;
+constructor(initial: Boolean) {
+  admin = disclose(key(localKey()));
+  enabled = disclose(initial);
+}
+export pure circuit key(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "example-toggle:key:v1"), sk]);
+}
+export circuit toggle(value: Boolean): [] {
+  assert(key(localKey()) == admin, "Not admin");
+  enabled = disclose(value);
+}
+```
+
+Now write PrivateBudget with this exact public interface:
+- `export sealed ledger owner: Bytes<32>;`
+- `export sealed ledger cap: Uint<64>;`
+- `export ledger spent: Uint<64>;`
+- `witness secretKey(): Bytes<32>;`
+- `constructor(limit: Uint<64>)` checks limit is positive, stores its disclosed value as cap, stores the domain-separated hash of secretKey() as owner, and starts spent at zero.
+- `export pure circuit ownerKey(sk: Bytes<32>): Bytes<32>` hashes the label `shadow-budget:owner:v1` and sk, using the same valid persistentHash syntax as the unrelated example above.
+- `export circuit spend(amount: Uint<64>): []` MUST assert ownerKey(secretKey()) == owner. It must separately assert amount > 0 and amount <= cap - spent, then increase spent by amount.
+- A ledger update uses `=`. Disclose the private amount in the public update. Uint<64> addition widens its type, so use `(spent + disclose(amount)) as Uint<64>` only AFTER the cap check. Never cast/truncate an unchecked sum before checking the budget.
+- No other exported state-mutating circuit. No reset, mint, token transfer or owner bypass.
+Use real assert(condition, "message"); statements. No English inside code. No explanations outside the fence. Under 45 lines.
