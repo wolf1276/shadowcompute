@@ -1,0 +1,17 @@
+.git
+.env*
+.private-states
+.wallet-state
+node_modules
+**/node_modules
+**/managed
+**/out
+**/cache
+**/*.db
+**/*.log
+artifacts
+packages/backend
+packages/contracts
+packages/bridge-evm
+docs
+.vercel-deploy

@@ -1,0 +1,11 @@
+import {build} from 'esbuild';
+import {mkdir,readFile,writeFile,copyFile,rm} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+const root=new URL('../../',import.meta.url),out=new URL('./dist/',import.meta.url);
+await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});
+const assets=['index.html','app.js','style.css','city.png','wallet.js','capacity.js','vault.js','vault-store.js','vault-passkey.js','experience.js','prepaid.js','prepaid-notes.js','transport.js'];
+for(const name of assets)await copyFile(new URL(`packages/terminal/${name}`,root),new URL(name,out));
+await build({entryPoints:[fileURLToPath(new URL('scripts/mera-browser.js',root))],nodePaths:[fileURLToPath(new URL('./node_modules',import.meta.url))],bundle:true,format:'esm',platform:'browser',target:'es2022',outfile:fileURLToPath(new URL('mera.js',out)),banner:{js:`/* @license Mera 0.2.0\n${await readFile(new URL('./node_modules/@category-labs/mera/LICENSE-MIT',import.meta.url),'utf8')}\n*/`}});
+await writeFile(new URL('compact-example.js',out),`export const compactExample=${JSON.stringify(await readFile(new URL('demos/compact-prompt.txt',root),'utf8'))};\n`);
+await writeFile(new URL('deployment.json',out),JSON.stringify({product:'ShadowCompute',hosting:'Vercel static interface',backend:'Explicitly paired loopback companion',publicPrepaidContractsDeployed:false}));
+console.log(`Built ${assets.length+3} public assets; no server, credential, note, database or proving-key files included.`);
