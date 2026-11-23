@@ -1,0 +1,77 @@
+{
+  "name": "shadowcompute",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "compile:fast": "node scripts/compile.mjs --skip-zk",
+    "test": "vitest run --exclude **/*.local.test.ts",
+    "test:local": "vitest run packages/backend/test/protocol.local.test.ts",
+    "typecheck": "tsc --noEmit",
+    "env:up": "docker compose up -d --wait",
+    "env:down": "docker compose down",
+    "gateway": "tsx --env-file-if-exists=.env packages/backend/src/main.ts",
+    "reconcile": "tsx scripts/reconcile.ts",
+    "demo": "tsx --env-file-if-exists=.env scripts/demo.ts",
+    "client": "tsx --env-file-if-exists=.env scripts/client.ts",
+    "client:preview": "tsx --env-file=.env.preview scripts/client.ts",
+    "gateway:preview": "node --env-file=.env.preview --import tsx packages/backend/src/main.ts",
+    "demo:preview": "tsx --env-file=.env.preview scripts/demo.ts",
+    "ask": "tsx --env-file-if-exists=.env scripts/ask.ts",
+    "ask:preview": "tsx --env-file=.env.preview scripts/ask.ts",
+    "ai:up": "docker compose --profile local-ai up -d ollama",
+    "ai:pull": "docker compose exec ollama ollama pull qwen2.5:0.5b",
+    "check:generated": "node --import tsx scripts/check-generated.mjs",
+    "ai:gpu": "bash scripts/ai-gpu.sh",
+    "ai:coder:pull": "OLLAMA_HOST=127.0.0.1:11435 .private-states/ollama-runtime/bin/ollama pull qwen2.5-coder:7b-instruct",
+    "deploy:generated": "node --import tsx --env-file-if-exists=.env scripts/deploy-generated.mjs",
+    "demo:compact": "node --env-file-if-exists=.env scripts/demo-compact.mjs",
+    "ai:coder:configure": "OLLAMA_HOST=127.0.0.1:11435 .private-states/ollama-runtime/bin/ollama create shadow-compact-coder:7b -f config/CompactCoder.Modelfile",
+    "terminal": "tsx --env-file-if-exists=.env scripts/terminal.ts",
+    "terminal:preview": "node --env-file=.env.preview --import tsx scripts/terminal.ts",
+    "test:wallet": "vitest run packages/backend/test/browser-vault.local.test.ts",
+    "build:browser": "node scripts/build-browser.mjs",
+    "pretest": "npm run build:browser",
+    "preterminal": "npm run build:browser",
+    "preterminal:preview": "npm run build:browser",
+    "pretest:wallet": "npm run build:browser",
+    "compile:prepaid": "node scripts/compile-prepaid.mjs",
+    "test:treasury": "forge test --root packages/bridge-evm",
+    "deploy:prepaid:local": "node --env-file-if-exists=.env --import tsx scripts/deploy-prepaid-local.ts",
+    "gateway:prepaid": "node --env-file=.env --env-file=.env.prepaid --import tsx packages/backend/src/main.ts",
+    "terminal:prepaid": "node --env-file=.env --env-file=.env.prepaid --import tsx scripts/terminal.ts",
+    "preterminal:prepaid": "npm run build:browser",
+    "demo:prepaid": "node --env-file=.env --env-file=.env.prepaid --import tsx scripts/demo-prepaid.ts",
+    "preflight:prepaid:preview": "node --env-file-if-exists=.env.preview --env-file-if-exists=.env.prepaid.preview --import tsx scripts/deploy-prepaid-preview.ts --check",
+    "deploy:prepaid:preview": "node --env-file-if-exists=.env.preview --env-file-if-exists=.env.prepaid.preview --import tsx scripts/deploy-prepaid-preview.ts",
+    "gateway:prepaid:preview": "node --env-file=.env.preview --env-file=.env.prepaid.preview --env-file=.env.prepaid.preview.runtime --import tsx packages/backend/src/main.ts",
+    "terminal:prepaid:preview": "node --env-file=.env.preview --env-file=.env.prepaid.preview --env-file=.env.prepaid.preview.runtime --import tsx scripts/terminal.ts",
+    "preterminal:prepaid:preview": "npm run build:browser"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.9",
+    "esbuild": "0.28.2",
+    "tsx": "^4.20.0",
+    "typescript": "^5.7.0",
+    "vitest": "5.0.4"
+  },
+  "overrides": {
+    "@midnightntwrk/wallet-sdk": "2.0.1",
+    "@midnightntwrk/ledger-v9": "1.0.2",
+    "@midnightntwrk/onchain-runtime-v4": "4.0.2",
+    "@midnightntwrk/zkir-v3": "3.2.1"
+  },
+  "packageManager": "npm@11.21.0",
+  "dependencies": {
+    "@category-labs/mera": "0.2.0",
+    "@openzeppelin/contracts": "5.6.1",
+    "viem": "2.58.4"
+  }
+}

@@ -1,0 +1,26 @@
+node_modules/
+packages/contracts/contract/managed/
+.env
+.env.*
+!.env.example
+.wallet-state/
+.private-states/
+*.db
+*.db-*
+*.log
+dist/
+artifacts/private/
+midnight-level-db/
+logs/
+artifacts/**/managed/
+
+# Generated same-origin Mera browser bundle.
+packages/terminal/mera.js
+
+packages/terminal/compact-example.js
+packages/bridge-evm/out/
+packages/bridge-evm/cache/
+
+# Deployment metadata and build output
+.vercel/
+.vercel-deploy/

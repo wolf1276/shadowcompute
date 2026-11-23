@@ -1,0 +1,9 @@
+title = "ShadowCompute publication scan"
+[extend]
+useDefault = true
+[[allowlists]]
+description = "Public on-chain token addresses and deployment transaction IDs, not authentication keys"
+condition = "AND"
+paths = ['''artifacts/(deployment(\.preview)?|local-e2e|preview-verification)\.json$''']
+regexTarget = "line"
+regexes = ['''^\s*"(tokenAddress|tokenDeployTx|testToken|token)":\s*"[0-9a-f]{64,66}"[,]?$''']
