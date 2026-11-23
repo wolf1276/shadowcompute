@@ -1,0 +1,11 @@
+import { CompiledContract } from '@midnight-ntwrk/midnight-js-protocol/v9/compact-js';
+import { fileURLToPath } from 'node:url';
+import { Contract } from './managed/shadow-vault/contract/index.js';
+import { Contract as Token } from './managed/test-token/contract/index.js';
+import { witnesses } from './witnesses.js';
+export * from './managed/shadow-vault/contract/index.js';
+export * from './witnesses.js';
+export const zkPath=fileURLToPath(new URL('./managed/shadow-vault',import.meta.url));
+export const tokenZkPath=fileURLToPath(new URL('./managed/test-token',import.meta.url));
+export const compiledVault=CompiledContract.make('ShadowVault',Contract).pipe(CompiledContract.withWitnesses(witnesses),CompiledContract.withCompiledFileAssets(zkPath));
+export const compiledToken=CompiledContract.make('ShadowTestToken',Token).pipe(CompiledContract.withVacantWitnesses,CompiledContract.withCompiledFileAssets(tokenZkPath));

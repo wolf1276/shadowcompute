@@ -1,0 +1,4 @@
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export ledger interactions: Counter;
+export circuit ping(): [] { interactions.increment(1); }

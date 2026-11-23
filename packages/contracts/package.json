@@ -1,0 +1,9 @@
+{
+  "name": "@shadowcompute/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@midnight-ntwrk/midnight-js-protocol": "5.0.1"
+  }
+}

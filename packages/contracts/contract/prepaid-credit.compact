@@ -1,0 +1,99 @@
+pragma language_version 0.28;
+import CompactStandardLibrary;
+export struct Approval { commitment: Bytes<32>; units: Uint<64>; }
+export struct Receipt { binding: Bytes<32>; expires: Uint<64>; }
+export struct Refund { recipient: Bytes<20>; units: Uint<64>; }
+export struct CreditNote { owner: Bytes<32>; balance: Uint<64>; }
+export sealed ledger issuer: Bytes<32>;
+export sealed ledger sourceChain: Uint<64>;
+export sealed ledger treasury: Bytes<20>;
+export sealed ledger asset: Bytes<20>;
+export sealed ledger creditPrice: Uint<64>;
+export ledger approvals: Map<Bytes<32>, Approval>;
+export ledger authorizedDeposits: Set<Bytes<32>>;
+export ledger commitments: Set<Bytes<32>>;
+export ledger notes: MerkleTree<20, Bytes<32>>;
+export ledger noteLeaves: Counter;
+export ledger spentNotes: Set<Bytes<32>>;
+export ledger receipts: Map<Bytes<32>, Receipt>;
+export ledger refunds: Map<Bytes<32>, Refund>;
+export ledger pendingUnits: Uint<128>;
+export ledger outstandingUnits: Uint<128>;
+export ledger consumedUnits: Uint<128>;
+export ledger refundedUnits: Uint<128>;
+witness issuerSecret(): Bytes<32>;
+witness ownerSecret(): Bytes<32>;
+witness salt(): Bytes<32>;
+witness nextSalt(): Bytes<32>;
+witness balance(): Uint<64>;
+witness notePath(leaf: Bytes<32>): MerkleTreePath<20, Bytes<32>>;
+constructor(chain: Uint<64>, sourceTreasury: Bytes<20>, token: Bytes<20>, price: Uint<64>) {
+ assert(chain == 31337 || chain == 11155111, "Test networks only");
+ assert(sourceTreasury != pad(20, "") && token != pad(20, ""), "Source addresses required");
+ assert(price > 0, "Credit price required");
+ sourceChain = disclose(chain); treasury = disclose(sourceTreasury); asset = disclose(token); creditPrice = disclose(price);
+ issuer = disclose(issuerKey(issuerSecret()));
+}
+export pure circuit issuerKey(sk: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<2, Bytes<32>>>([pad(32,"sc:prepaid:issuer:v1"),sk]);
+}
+export pure circuit ownerKey(sk: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"sc:prepaid:owner:v1"),instance,sk]);
+}
+export pure circuit noteCommit(sk: Bytes<32>, nonce: Bytes<32>, units: Uint<64>, instance: Bytes<32>): Bytes<32> {
+ const blind=persistentHash<Vector<3, Bytes<32>>>([pad(32,"sc:prepaid:note:v1"),instance,nonce]);
+ return persistentCommit<CreditNote>(CreditNote{owner:ownerKey(sk,instance),balance:units},blind);
+}
+export pure circuit noteNullifier(sk: Bytes<32>, nonce: Bytes<32>, units: Uint<64>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<4, Bytes<32>>>([pad(32,"sc:prepaid:spend:v1"),instance,sk,noteCommit(sk,nonce,units,instance)]);
+}
+export pure circuit receiptBinding(bearer: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:receipt:v1"),instance,bearer]);
+}
+export circuit authorizeDeposit(id: Bytes<32>, commitment: Bytes<32>, units: Uint<64>): [] {
+ assert(issuerKey(issuerSecret()) == issuer, "Only bridge issuer");
+ assert(units > 0 && units <= 1000000000, "Invalid credit quantity");
+ assert(!authorizedDeposits.member(disclose(id)), "Deposit already authorized");
+ authorizedDeposits.insert(disclose(id)); approvals.insert(disclose(id), Approval{commitment:disclose(commitment),units:disclose(units)});
+ pendingUnits = (pendingUnits + disclose(units)) as Uint<128>;
+}
+circuit appendNote(units: Uint<64>, nonce: Bytes<32>): [] {
+ assert(noteLeaves.read() < 1048576, "Credit tree full");
+ const leaf=disclose(noteCommit(ownerSecret(),nonce,units,kernel.self().bytes));
+ assert(!commitments.member(leaf), "Duplicate credit note");
+ commitments.insert(leaf); notes.insert(leaf); noteLeaves.increment(1);
+}
+export circuit claimDeposit(id: Bytes<32>): [] {
+ assert(approvals.member(disclose(id)), "No deposit approval");
+ const approved=approvals.lookup(disclose(id));
+ assert(noteCommit(ownerSecret(),salt(),approved.units,kernel.self().bytes) == approved.commitment, "Wrong deposit owner or quantity");
+ appendNote(approved.units,salt()); approvals.remove(disclose(id));
+ pendingUnits = (pendingUnits - approved.units) as Uint<128>;
+ outstandingUnits = (outstandingUnits + approved.units) as Uint<128>;
+}
+circuit spendNote(): Bytes<32> {
+ assert(balance() > 0, "Empty credit note");
+ const leaf=noteCommit(ownerSecret(),salt(),balance(),kernel.self().bytes);
+ const path=notePath(leaf); assert(path.leaf == leaf, "Wrong credit leaf");
+ assert(notes.checkRoot(disclose(merkleTreePathRoot<20,Bytes<32>>(path))), "Invalid private credit membership");
+ const id=disclose(noteNullifier(ownerSecret(),salt(),balance(),kernel.self().bytes));
+ assert(!spentNotes.member(id), "Credit note already spent"); spentNotes.insert(id); return id;
+}
+export circuit redeem(binding: Bytes<32>, expires: Uint<64>): [] {
+ assert(expires >= 600 && expires < 1000000000000, "Invalid receipt expiry");
+ assert(blockTimeLt(disclose(expires)), "Receipt expired");
+ assert(blockTimeGte(disclose((expires-600) as Uint<64>)), "Receipt expiry too distant");
+ assert(nextSalt() != salt(), "Rotate credit salt");
+ const id=spendNote();
+ appendNote((balance()-1) as Uint<64>,nextSalt());
+ assert(outstandingUnits >= 1, "No funded credits");
+ outstandingUnits = (outstandingUnits-1) as Uint<128>; consumedUnits = (consumedUnits+1) as Uint<128>;
+ receipts.insert(id,Receipt{binding:disclose(binding),expires:disclose(expires)});
+}
+export circuit requestRefund(recipient: Bytes<20>): [] {
+ assert(recipient != pad(20,""), "Refund recipient required");
+ const id=spendNote();
+ assert(outstandingUnits >= balance(), "No funded balance");
+ outstandingUnits = (outstandingUnits-disclose(balance())) as Uint<128>; refundedUnits = (refundedUnits+disclose(balance())) as Uint<128>;
+ refunds.insert(id,Refund{recipient:disclose(recipient),units:disclose(balance())});
+}

@@ -1,0 +1,160 @@
+pragma language_version 0.28;
+import CompactStandardLibrary;
+
+export struct Position { owner: Bytes<32>; checkpoint: Uint<64>; carry: Uint<128>; }
+export struct Receipt { binding: Bytes<32>; expires: Uint<64>; }
+export sealed ledger asset: Bytes<32>;
+export sealed ledger lotSize: Uint<64>;
+export sealed ledger rewardUnit: Uint<64>;
+export sealed ledger apyBps: Uint<32>;
+export sealed ledger admin: Bytes<32>;
+export sealed ledger gateway: ZswapCoinPublicKey;
+export ledger simulatedSeconds: Uint<64>;
+export ledger positions: MerkleTree<10, Bytes<32>>;
+export ledger credits: MerkleTree<10, Bytes<32>>;
+export ledger positionLeaves: Counter;
+export ledger creditLeaves: Counter;
+export ledger positionCommitments: Set<Bytes<32>>;
+export ledger creditCommitments: Set<Bytes<32>>;
+export ledger spentPositions: Set<Bytes<32>>;
+export ledger spentCredits: Set<Bytes<32>>;
+export ledger principalCoins: Map<Bytes<32>, QualifiedShieldedCoinInfo>;
+export ledger reserveCoins: Map<Bytes<32>, QualifiedShieldedCoinInfo>;
+export ledger principal: Uint<128>;
+export ledger reserve: Uint<128>;
+export ledger allocated: Uint<128>;
+export ledger issued: Counter;
+export ledger redeemed: Counter;
+export ledger receipts: Map<Bytes<32>, Receipt>;
+
+witness secret(): Bytes<32>;
+witness salt(): Bytes<32>;
+witness nextSalt(): Bytes<32>;
+witness checkpoint(): Uint<64>;
+witness carry(): Uint<128>;
+witness creditSecret(): Bytes<32>;
+witness positionPath(leaf: Bytes<32>): MerkleTreePath<10, Bytes<32>>;
+witness creditPath(leaf: Bytes<32>): MerkleTreePath<10, Bytes<32>>;
+
+constructor(color: Bytes<32>, lot: Uint<64>, unit: Uint<64>, rate: Uint<32>, payee: ZswapCoinPublicKey) {
+ assert(lot > 0 && lot <= 1000000000000, "Invalid lot size");
+ assert(unit > 0 && unit <= lot, "Invalid reward unit");
+ assert(rate > 0 && rate <= 10000, "Invalid simulated APY");
+ asset = disclose(color); lotSize = disclose(lot); rewardUnit = disclose(unit);
+ apyBps = disclose(rate); gateway = disclose(payee);
+ admin = disclose(adminKey(secret()));
+}
+export pure circuit adminKey(sk: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<2, Bytes<32>>>([pad(32,"shadow:admin:v1"),sk]);
+}
+export pure circuit ownerKey(sk: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:owner:v1"),instance,sk]);
+}
+export pure circuit positionCommit(sk: Bytes<32>, nonce: Bytes<32>, time: Uint<64>, remainder: Uint<128>, instance: Bytes<32>): Bytes<32> {
+ const blind = persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:position:v1"),instance,nonce]);
+ return persistentCommit<Position>(Position{owner:ownerKey(sk,instance),checkpoint:time,carry:remainder},blind);
+}
+export pure circuit positionNullifier(sk: Bytes<32>, nonce: Bytes<32>, time: Uint<64>, remainder: Uint<128>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<4, Bytes<32>>>([pad(32,"shadow:position-spend:v1"),instance,sk,positionCommit(sk,nonce,time,remainder,instance)]);
+}
+export pure circuit creditCommit(sk: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:credit:v1"),instance,sk]);
+}
+export pure circuit creditNullifier(sk: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:credit-spend:v1"),instance,sk]);
+}
+export pure circuit receiptBinding(bearer: Bytes<32>, instance: Bytes<32>): Bytes<32> {
+ return persistentHash<Vector<3, Bytes<32>>>([pad(32,"shadow:receipt:v1"),instance,bearer]);
+}
+circuit appendPosition(sk: Bytes<32>, nonce: Bytes<32>, time: Uint<64>, remainder: Uint<128>): [] {
+ assert(positionLeaves.read() < 1024, "Position tree full");
+ const leaf=disclose(positionCommit(sk,nonce,time,remainder,kernel.self().bytes));
+ assert(!positionCommitments.member(leaf), "Duplicate position commitment");
+ positionCommitments.insert(leaf);
+ positions.insert(leaf);
+ positionLeaves.increment(1);
+}
+circuit spendPosition(): [] {
+ const sk=secret(); const nonce=salt();
+ const leaf=positionCommit(sk,nonce,checkpoint(),carry(),kernel.self().bytes);
+ const path=positionPath(leaf);
+ assert(path.leaf == leaf, "Wrong position leaf");
+ assert(positions.checkRoot(disclose(merkleTreePathRoot<10,Bytes<32>>(path))), "Invalid position membership");
+ const n=disclose(positionNullifier(sk,nonce,checkpoint(),carry(),kernel.self().bytes));
+ assert(!spentPositions.member(n), "Position already spent");
+ spentPositions.insert(n);
+}
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+ assert(coin.color == asset, "Wrong deposit asset");
+ assert(coin.value == lotSize, "Wrong deposit denomination");
+ const key=disclose(coin.nonce);
+ assert(!principalCoins.member(key), "Duplicate principal coin");
+ appendPosition(secret(),salt(),simulatedSeconds,0);
+ receiveShielded(disclose(coin));
+ principalCoins.insertCoin(key,disclose(coin),right<ZswapCoinPublicKey,ContractAddress>(kernel.self()));
+ principal = (principal + lotSize) as Uint<128>;
+}
+export circuit withdraw(coinKey: Bytes<32>): [] {
+ spendPosition();
+ const key=disclose(coinKey);
+ assert(principalCoins.member(key), "Principal coin unavailable");
+ const coin=principalCoins.lookup(key);
+ sendShielded(coin,left<ZswapCoinPublicKey,ContractAddress>(ownPublicKey()),coin.value);
+ principalCoins.remove(key);
+ principal = (principal - lotSize) as Uint<128>;
+}
+export circuit fundReserve(coin: ShieldedCoinInfo): [] {
+ assert(coin.color == asset, "Wrong reserve asset");
+ assert(coin.value == rewardUnit, "Wrong reserve denomination");
+ const key=disclose(coin.nonce);
+ assert(!reserveCoins.member(key), "Duplicate reserve coin");
+ receiveShielded(disclose(coin));
+ reserveCoins.insertCoin(key,disclose(coin),right<ZswapCoinPublicKey,ContractAddress>(kernel.self()));
+ reserve = (reserve + rewardUnit) as Uint<128>;
+}
+export circuit advanceSimulation(time: Uint<64>): [] {
+ assert(adminKey(secret()) == admin, "Only simulation admin");
+ assert(time > simulatedSeconds && time <= 315360000, "Invalid simulated time");
+ simulatedSeconds = disclose(time);
+}
+export circuit claim(expectedTime: Uint<64>): [] {
+ assert(expectedTime == simulatedSeconds, "Simulation clock changed; rebuild claim");
+ assert(checkpoint() <= simulatedSeconds, "Future checkpoint");
+ const elapsed=(simulatedSeconds-checkpoint()) as Uint<64>;
+ const numerator=carry() + lotSize * apyBps * elapsed;
+ const cost=rewardUnit * 31536000 * 10000;
+ assert(numerator >= cost, "Insufficient simulated yield");
+ assert(reserve >= allocated + rewardUnit, "Reward reserve exhausted");
+ assert(nextSalt() != salt(), "Rotate position salt");
+ assert(creditLeaves.read() < 1024, "Credit tree full");
+ spendPosition();
+ appendPosition(secret(),nextSalt(),simulatedSeconds,(numerator-cost) as Uint<128>);
+ const credit=disclose(creditCommit(creditSecret(),kernel.self().bytes));
+ assert(!creditCommitments.member(credit), "Duplicate credit commitment");
+ creditCommitments.insert(credit);
+ credits.insert(credit);
+ creditLeaves.increment(1); issued.increment(1);
+ allocated = (allocated + rewardUnit) as Uint<128>;
+}
+export circuit redeem(coinKey: Bytes<32>, binding: Bytes<32>, expires: Uint<64>): [] {
+ const sk=creditSecret();
+ const leaf=creditCommit(sk,kernel.self().bytes);
+ const path=creditPath(leaf);
+ assert(path.leaf == leaf, "Wrong credit leaf");
+ assert(credits.checkRoot(disclose(merkleTreePathRoot<10,Bytes<32>>(path))), "Invalid credit membership");
+ const n=disclose(creditNullifier(sk,kernel.self().bytes));
+ assert(!spentCredits.member(n), "Credit already redeemed");
+ assert(expires >= 600 && expires < 1000000000000, "Invalid receipt expiry");
+ assert(blockTimeLt(disclose(expires)), "Receipt expired");
+ assert(blockTimeGte(disclose((expires-600) as Uint<64>)), "Receipt expiry too distant");
+ const key=disclose(coinKey);
+ assert(reserveCoins.member(key), "Reserve coin unavailable");
+ assert(allocated >= rewardUnit, "No funded allocation");
+ const coin=reserveCoins.lookup(key);
+ sendShielded(coin,left<ZswapCoinPublicKey,ContractAddress>(gateway),coin.value);
+ reserveCoins.remove(key);
+ reserve = (reserve-rewardUnit) as Uint<128>;
+ allocated = (allocated-rewardUnit) as Uint<128>;
+ spentCredits.insert(n); redeemed.increment(1);
+ receipts.insert(n,Receipt{binding:disclose(binding),expires:disclose(expires)});
+}
